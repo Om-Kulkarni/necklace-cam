@@ -4,7 +4,7 @@ Researched 2026-11-21. Terms follow `CONTEXT.md`. Tags: **[V]** read in the cite
 
 ## Recommendation
 
-1. **Yes, move the processor, storage and radio to the Counterweight, but only if a 2-day bench test passes.** Use **Option B: direct 2-lane MIPI CSI-2 over a 30-45 cm micro-coax or shielded flex**, with only the sensor module, microphone and Recording Indicator in the Pendant. It is the only option that gets the Pendant under the 0.3-0.4 W limit while keeping the RTL8735B, its SDK and the AMB82-Mini work unchanged [E].
+1. **Yes, move the processor, storage and radio to the Counterweight, but only if a 2-day bench test passes.** Use **Option B: direct 2-lane MIPI CSI-2 over a 30-45 cm micro-coax or shielded flex**, with only the sensor module and microphone in the Pendant. It is the only option that gets the Pendant under the 0.3-0.4 W limit while keeping the RTL8735B, its SDK and the AMB82-Mini work unchanged [E].
 2. **Why move at all:** the baseline Pendant dissipates 1-3 W while recording (`power-thermal.md`). With the same lumped model that gives about 2 min of continuous recording at 2 W and 4.6 min at 1 W before 48 C (calculation below). A sensor-only Pendant at about 0.2 W never reaches the limit. Heat, not energy, is the binding limit, so removing the SoC from the Pendant is the real fix.
 3. **Fallback if the bench test fails: Option C with a small serializer (THine THCV243 / V-by-One HS)**, not TI FPD-Link or ADI GMSL. The TI part alone uses 0.28 W typ (0.41 W max), which is the whole Pendant budget [V S5]. THCV243 power is **[U]** (datasheet not readable); that is the first thing to confirm.
 4. **Reject D and UVC modules.** A shipped 1080p UVC module lists 1.2 W [V S14], another lists 300 mA max at 5 V (1.5 W) [V S15]. The RTL8735B has UVC *device* mode only in the SDK [V S10, S11], so a split design still leaves an SoC in the Pendant.
@@ -23,16 +23,16 @@ Biggest uncertainty: whether the RTL8735B CSI receiver and the closed sensor/ISP
 
 ## Options compared
 
-Pendant power for B uses sensor-only power. Sensor figures: GC2053 98 mW at 1080p30 (module seller, not the sensor datasheet) [V S16]; OV2735 176 mW (seen in a search snippet of the vendor brief; the page I could fetch did not confirm it) [U S17]. I use 0.1-0.2 W for a sensor plus passives and 0.15-0.25 W with microphone, LED and cable losses [E].
+Pendant power for B uses sensor-only power. Sensor figures: GC2053 98 mW at 1080p30 (module seller, not the sensor datasheet) [V S16]; OV2735 176 mW (seen in a search snippet of the vendor brief; the page I could fetch did not confirm it) [U S17]. I use 0.1-0.2 W for a sensor plus passives and 0.15-0.25 W with microphone and cable losses [E].
 
 | | A. Baseline (all in Pendant) | B. Direct MIPI over micro-coax / flex | C. Serializer link (TI / ADI / THine) | D. Split: RTL8735B in Pendant, USB/SPI to rear | E. USB/UVC module |
 |---|---|---|---|---|---|
-| Pendant parts | SoC, DDR, flash, SD, Wi-Fi, antenna, sensor, mic | Sensor module, MIC, LED, cable termination | Sensor, serializer (TI 5x5 mm; THCV243 2.1x2.9 mm), PoC parts | Sensor, RTL8735B, mic, link driver | UVC module (Arducam B0630: 19.5 x 15 x 17.3 mm) |
+| Pendant parts | SoC, DDR, flash, SD, Wi-Fi, antenna, sensor, mic | Sensor module, MIC, cable termination | Sensor, serializer (TI 5x5 mm; THCV243 2.1x2.9 mm), PoC parts | Sensor, RTL8735B, mic, link driver | UVC module (Arducam B0630: 19.5 x 15 x 17.3 mm) |
 | Achievable Pendant size | 30 x 25 x 12 mm, tight [E] | About 20 x 15 x 8 mm, set by sensor module and cable strain relief [E] | B plus 25 mm2 (TI) or 6 mm2 (THine) [V S5, S7] | Nearly A, minus Wi-Fi, SD, antenna [E] | Module depth 17.3 mm already exceeds 12 mm [V S14] |
 | Pendant power (continuous) | 1-3 W recording [power-thermal.md]; 2.5 W Transfer | **0.15-0.25 W [E]** | TI: 0.29 W typ, 0.41 W max serializer alone [V S5] + sensor = **0.4-0.6 W**. THine: [U], guess 0.1-0.25 W [E] | RTL8735B without Wi-Fi or SD: **0.5-1.0 W [E]**, unmeasured | **1.2 W [V S14]**; 1.5 W max [V S15] |
 | Counterweight power | None (battery only) | SoC, SD, Wi-Fi: 2-3 W, same as A today [E] | Same, plus deserializer: TI page lists no power [U]; assume 0.3-0.5 W [E] | Host SoC plus Wi-Fi, SD: 1-2.5 W [E] | Host plus Wi-Fi, SD |
 | Fits 0.3-0.4 W? | No (2 min at 2 W) | **Yes, margin 0.1-0.2 W [E]** | TI no; THine unknown | Probably no | No |
-| Conductors, diameter | 2 power (power-thermal.md) | 3 pairs (CLK, 2 data) + I2C 2 + MCLK + power 2 + mic 2-3 + LED/button 1-2: about **16-18 conductors**, about 3-4 mm round [E; no cable datasheet found] | TI: 1 coax (PoC) about 1.2 mm [E]. THine: 1 pair + 2 power + I2C if not tunneled: 4-6 conductors [E] | USB 2: 4 wires; SPI: 4-6 wires + power | USB 2: 4 wires |
+| Conductors, diameter | 2 power (power-thermal.md) | 3 pairs (CLK, 2 data) + I2C 2 + MCLK + power 2 + mic 2-3 + button 1-2: about **15-18 conductors**, about 3-4 mm round [E; no cable datasheet found] | TI: 1 coax (PoC) about 1.2 mm [E]. THine: 1 pair + 2 power + I2C if not tunneled: 4-6 conductors [E] | USB 2: 4 wires; SPI: 4-6 wires + power | USB 2: 4 wires |
 | Flex life | Power wires only: easy | Micro-coax is rated for motion by vendors, no cycle counts found [V S6] **[U]**; stiff for the neck [E] | Thin coax or twisted pair: better than B [E] | Best (4 wires) | Best |
 | Breakaway connector | 2 contacts, trivial | **Hard.** About 14+ contacts including 3 controlled-impedance pairs; no off-the-shelf rated part found. Custom spring-pin array [E] | Coax at 3-4 Gbps: custom too. Fewer contacts than B | **Easiest:** USB 2 magnetic connectors with 480 Mbit/s claims exist (Rosenberger, Amphenol listing) [V S12, S13] | Same as D |
 | On disconnect | Power cut mid-write; MP4 may be corrupt [E] | Counterweight stays powered, closes file; sensor loss must not crash the CSI driver **[U]** | Same as B | Same as B | Same as B |
@@ -75,12 +75,12 @@ Pendant power for B uses sensor-only power. Sensor figures: GC2053 98 mW at 1080
 | I2C (100 kHz)  <-------------------->|-----| SCL, SDA                |-----|  SD card (Onboard Storage)             |
 | MCLK 24 MHz or local oscillator  <---|-----| 1 wire                  |-----|  Wi-Fi + BLE antenna (far face from    |
 | PDM mic (CLK, DATA)  --------------->|-----| 2-3 wires               |---->|   neck, 10 mm clearance)               |
-| Recording Indicator LED  <-----------|-----| 1 wire                  |<----|  Charger, 3.7 V cell, 5 V -> 3.3 V     |
+|                                      |-----|                         |     |  Charger, 3.7 V cell, 5 V -> 3.3 V     |
 | 3.3 V LDOs for sensor rails  <-------|-----| 3.3 V + GND (2 wires)   |<----|  Power eFuse + NTC                     |
 +--------------------------------------+     +----------+--------------+     +----------------------------------------+
                                                          |
                                        [BREAKAWAY CONNECTOR, about 14-18 contacts, 15-25 N release, custom]
-                                       On release: sensor, mic, LED lose power; Counterweight stays on,
+                                       On release: sensor and mic lose power; Counterweight stays on,
                                        closes the MP4, restarts recording or stops on camera-lost watchdog.
 ```
 Cable passes along one side of the neck only (25-45 cm); the other side is a plain strength member so the loop still opens at the connector [E].
@@ -96,7 +96,7 @@ Cable passes along one side of the neck only (25-45 cm); the other side is a pla
 7. **EMI:** 622-742 Mbps edge content next to a 2.4 GHz radio; no measurement.
 8. **Counterweight heat and cell temperature** are new loads; battery limits are in `power-thermal.md`.
 9. **Pendant power figures are estimates.** No vendor publishes recording current for the RTL8735B (`processors.md`), and I could not confirm OV2735's 176 mW **[U]**.
-10. **Safety and legal items** (breakaway force standard, Recording Indicator) remain open tickets.
+10. **Safety and legal items** (breakaway force standard) remain open. v1 has no Recording Indicator.
 
 ## Cheap de-risking test (about 2 days, under 100 EUR [E])
 
