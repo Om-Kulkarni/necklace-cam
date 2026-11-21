@@ -1,0 +1,9 @@
+.worktrees/
+.claude/worktrees/
+.claude/settings.local.json
+.env
+*.log
+__pycache__/
+.venv/
+*-backups/
+fp-info-cache
