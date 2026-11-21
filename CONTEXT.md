@@ -24,5 +24,3 @@ _Avoid_: Stream
 _Avoid_: Streaming
 
 **Preview**: A short live view on the phone used for aiming. It is not the saved Capture.
-
-**Recording Indicator**: A light that hardware forces on whenever the Necklace records.
