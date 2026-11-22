@@ -6,6 +6,10 @@ Tags: **[V]** read in the cited source. **[S]** known only from a search-result 
 
 Settled inputs: processor, storage, radio, camera and mic stay in the Pendant; battery is in the Counterweight; no recording indicator; both AMB82-Mini and XIAO ESP32-S3 Sense get tested; target is 720p at 24-30 fps with audio; Wi-Fi is off while recording; Transfer runs afterward in temperature-limited bursts, with big backlogs moved on the charger off the body. Starting envelope 30 x 25 x 12 mm, free to grow; XIAO is 15 mm deep as sold [`720p-xiao.md`].
 
+## Decision (2026-11-22)
+
+The v1 Pendant size target is **40 x 32 x 15 mm**, for a custom AMB82-class board. Plan for 0.6-0.9 W sustained at a 43 C surface until the cooling bench measures it. The XIAO as sold needs about 18 mm of depth, so it is a bench test board and does not fit this target without a custom board.
+
 ## Recommendation
 
 1. **Physics first.** Passive heat rejection from a body this size is set by exposed area times a film coefficient (about 12 W/m2/K, convection plus radiation). Spreaders, graphite, vapor chambers, pads, thermal mass and PCM do not change that number; they only move heat around inside or delay the rise. **Only area, emissivity, airflow, the body/cord paths, and the choice of which face may run hotter raise continuous power** [E, model below].
